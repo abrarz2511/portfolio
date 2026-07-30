@@ -1,0 +1,26 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next
+/out
+
+# testing
+/coverage
+/playwright-report
+/test-results
+
+# local environment files
+.env*
+!.env.example
+
+# local media masters and temporary tooling
+/portfolio hero.mp4
+/Profile pic.jpg
+/Resume Abrar Zahin AI.pdf
+/.tmp-pdf
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
