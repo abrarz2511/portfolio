@@ -7,6 +7,7 @@ export const projects: Project[] = [
     summary:
       "A real-time clinical workflow automation platform for physicians's, simplifying patient-note capture, summarization, and insurance and CMS code compliance.",
     role: "AI & Backend Engineering",
+    detailLayout: "expanded",
     technologies: [
       "FastAPI",
       "Groq",
@@ -178,6 +179,7 @@ export const projects: Project[] = [
     summary:
       "A hardened, observable AI chat API designed around secure request handling and predictable production behavior.",
     role: "Backend & AI Engineering",
+    detailLayout: "expanded",
     technologies: [
       "FastAPI",
       "LangGraph",
@@ -189,22 +191,98 @@ export const projects: Project[] = [
     publishedAt: "2026-06-01",
     featured: true,
     status: "complete",
+    repositoryUrl: "https://github.com/abrarz2511/production-api",
     sections: [
       {
         heading: "Problem",
-        body: "A production LLM endpoint needs controls for unsafe input, sensitive data, abuse, caching, and operational visibility—not only a model response.",
+        body: "A production LLM endpoint needs more than a successful model response. It must handle unsafe input, sensitive data, abuse, model failures, repeated requests, and operational visibility without exposing users to unpredictable behavior.",
       },
       {
         heading: "Approach",
-        body: "The API uses FastAPI and LangGraph to separate request validation, orchestration, response handling, and monitoring concerns.",
+        body: "The service uses FastAPI and a small LangGraph state machine to separate request validation, model orchestration, response handling, and monitoring concerns.",
+        highlights: [
+          {
+            label: "Explicit agent flow",
+            body: "LangGraph sends an accepted request to the primary OpenAI model and records which model produced the response. If the primary call fails, the graph routes to a fallback model before returning a safe error response when both calls fail.",
+          },
+          {
+            label: "Controlled state",
+            body: "Conversation messages, the latest error, retry state, and the selected model are carried through the graph explicitly. This makes fallback behavior easier to inspect and test than an implicit chain of model calls.",
+          },
+        ],
+      },
+      {
+        heading: "Architecture",
+        body: "FastAPI exposes chat, health, and operational endpoints while LangGraph owns model execution and fallback routing. Separate security, cache, monitoring, configuration, and schema modules keep cross-cutting production concerns isolated from the agent workflow.",
+        technologyTable: {
+          title: "Technology stack",
+          technologies: [
+            {
+              name: "FastAPI",
+              iconSlug: "fastapi",
+              url: "https://fastapi.tiangolo.com/",
+            },
+            {
+              name: "Python",
+              iconSlug: "python",
+              url: "https://www.python.org/",
+            },
+            {
+              name: "LangGraph",
+              url: "https://www.langchain.com/langgraph",
+            },
+            {
+              name: "OpenAI API",
+              url: "https://platform.openai.com/docs/",
+            },
+            {
+              name: "SlowAPI",
+              url: "https://slowapi.readthedocs.io/",
+            },
+            {
+              name: "LangSmith",
+              iconSlug: "langchain",
+              url: "https://www.langchain.com/langsmith",
+            },
+            {
+              name: "Docker",
+              iconSlug: "docker",
+              url: "https://www.docker.com/",
+            },
+          ],
+        },
       },
       {
         heading: "Security",
-        body: "Prompt-injection checks, PII pattern detection, sensitive-output masking, request validation, and rate limiting form the security layer.",
+        body: "The request lifecycle includes defensive checks before and after model execution so unsafe or sensitive content is not passed through without review.",
+        highlights: [
+          {
+            label: "Input protection",
+            body: "Prompt-injection checks, PII pattern detection, schema validation, and SlowAPI rate limiting reject or constrain unsafe and abusive requests before they reach the agent.",
+          },
+          {
+            label: "Output protection",
+            body: "Response validation masks or blocks sensitive output before it is returned to the caller, providing a final control after model generation.",
+          },
+        ],
       },
       {
-        heading: "Operations",
-        body: "TTL response caching, structured JSON logs, request metrics, LangSmith tracing, and Docker support reliable operation.",
+        heading: "Reliability",
+        body: "The API combines model failover, TTL caching, structured logging, request metrics, health checks, LangSmith tracing, and containerized delivery to make runtime behavior observable and resilient.",
+        highlights: [
+          {
+            label: "Graceful model fallback",
+            body: "The agent attempts a primary model first, routes to a fallback model on failure, and returns a safe apology response if neither provider call succeeds.",
+          },
+          {
+            label: "Operational visibility",
+            body: "Structured JSON logs, basic request metrics, health endpoints, and LangSmith traces expose request behavior and model execution for debugging and monitoring.",
+          },
+          {
+            label: "Response caching",
+            body: "An in-memory TTL cache can serve repeated responses without invoking the model again, reducing unnecessary latency and model usage while keeping entries time bounded.",
+          },
+        ],
       },
     ],
   },
@@ -212,33 +290,111 @@ export const projects: Project[] = [
     slug: "supbuddy",
     title: "SupBuddy",
     summary:
-      "An agentic supply-chain platform for shipment analysis, risk prediction, and exception communication.",
+      "An agent-assisted logistics platform that turns shipment exceptions into prioritized risks, contextual explanations, and recommended actions.",
     role: "Full-stack & Agent Engineering",
+    detailLayout: "expanded",
     technologies: [
       "IBM watsonx Orchestrate",
       "FastAPI",
       "React",
-      "PostgreSQL",
+      "TypeScript",
+      "Python",
     ],
     publishedAt: "2026-05-01",
     featured: true,
     status: "building",
+    repositoryUrl: "https://github.com/abrarz2511/SupBuddy",
     sections: [
       {
         heading: "Problem",
-        body: "Shipment monitoring and exception management require repeated analysis, risk review, and stakeholder communication.",
+        body: "Logistics coordinators often have to check multiple tracking portals, compare milestone timestamps, read disruption reports, and decide which delayed shipment needs attention first. That manual process makes it difficult to distinguish a routine delay from a high-impact exception quickly.",
       },
       {
         heading: "Approach",
-        body: "A multi-agent workflow supports analysis, risk prediction, and communication assistance using IBM watsonx Orchestrate and watsonx.ai.",
+        body: "SupBuddy combines deterministic shipment monitoring with an IBM watsonx Orchestrate analyst agent. The backend identifies concrete exceptions first, enriches them with operating context, and then asks the agent for a structured risk explanation and recommended next action.",
+        highlights: [
+          {
+            label: "Deterministic exception detection",
+            body: "Scheduled ingestion normalizes ocean, port, trucking, hub, and final-mile milestones before SLA rules flag late arrivals, stale updates, missing milestones, and delayed handoffs.",
+          },
+          {
+            label: "Context-aware enrichment",
+            body: "Backend tools gather relevant weather, traffic, local-news, and port-disruption signals so exception analysis reflects the conditions surrounding a shipment.",
+          },
+          {
+            label: "Human-controlled decisions",
+            body: "The agent returns a likely cause, risk priority, and recommended action, while the logistics coordinator remains responsible for reviewing the evidence and deciding what to do next.",
+          },
+        ],
       },
       {
         heading: "Architecture",
-        body: "FastAPI microservices provide agents with scoped business context and perform pre-checks before agent execution.",
+        body: "A scheduled backend pipeline ingests shipment updates, normalizes milestone events, evaluates SLA rules, and gathers external context before invoking the analyst agent. FastAPI exposes shipment and alert workflows to a React operations dashboard that presents risk, evidence, status, and recommended actions.",
+        technologyTable: {
+          title: "Technology stack",
+          technologies: [
+            {
+              name: "React",
+              iconSlug: "react",
+              url: "https://react.dev/",
+            },
+            {
+              name: "TypeScript",
+              iconSlug: "typescript",
+              url: "https://www.typescriptlang.org/",
+            },
+            {
+              name: "FastAPI",
+              iconSlug: "fastapi",
+              url: "https://fastapi.tiangolo.com/",
+            },
+            {
+              name: "Python",
+              iconSlug: "python",
+              url: "https://www.python.org/",
+            },
+            {
+              name: "IBM watsonx Orchestrate",
+              url: "https://www.ibm.com/products/watsonx-orchestrate",
+            },
+            {
+              name: "IBM Bob",
+              url: "https://www.ibm.com/products/bob",
+            },
+          ],
+        },
       },
       {
-        heading: "Outcome",
-        body: "The project reduced manual shipment-monitoring effort by 60%, while pre-check services reduced agent costs by 30%.",
+        heading: "Workflow",
+        body: "Each exception moves through a traceable sequence from raw tracking data to a coordinator-reviewed recommendation.",
+        highlights: [
+          {
+            label: "Monitor and normalize",
+            body: "A scheduled job retrieves tracking updates and converts carrier-specific events into a common milestone model that the rules engine can evaluate consistently.",
+          },
+          {
+            label: "Detect and explain",
+            body: "The rules engine creates a structured exception, context tools add external evidence, and watsonx Orchestrate produces an operational explanation and priority.",
+          },
+          {
+            label: "Review and act",
+            body: "The dashboard highlights the highest-risk shipments and gives coordinators the supporting context and recommended next step needed to take informed action.",
+          },
+        ],
+      },
+      {
+        heading: "Next Steps",
+        body: "The architecture is designed to grow from demonstration data into real carrier, port, warehouse, and customer integrations while preserving human review of operational decisions.",
+        highlights: [
+          {
+            label: "Planned integrations",
+            body: "Future work includes live carrier and freight-forwarder APIs, predictive ETA scoring from historical shipment data, and approval workflows for customer notifications.",
+          },
+          {
+            label: "Agent expansion",
+            body: "The workflow can be extended with specialized customs, carrier, and warehouse agents while keeping exception evidence and final actions visible to the coordinator.",
+          },
+        ],
       },
     ],
   },
@@ -246,28 +402,115 @@ export const projects: Project[] = [
     slug: "handwriting-generation",
     title: "Human Handwriting Generation",
     summary:
-      "An RNN-based generation pipeline connected to pen-plotter hardware for automated handwriting execution.",
-    role: "Machine Learning Engineering",
-    technologies: ["TensorFlow", "Google Colab", "PyQt", "NVIDIA GPUs"],
+      "A deployable handwriting-synthesis model connected to a GRBL pen plotter and modular envelope-processing hardware.",
+    role: "Machine Learning & Systems Engineering",
+    detailLayout: "expanded",
+    technologies: [
+      "TensorFlow",
+      "Python",
+      "PyQt",
+      "GRBL",
+      "NVIDIA GPUs",
+      "Google Colab",
+    ],
     publishedAt: "2026-05-01",
     featured: true,
     status: "complete",
     sections: [
       {
         heading: "Problem",
-        body: "Orion Mailing Solutions needed an end-to-end way to generate natural handwriting and execute it through physical plotting hardware.",
+        body: "Orion Mailing Solutions needed an affordable system that could generate unique, natural-looking handwritten letters with a real pen and move them through a modular envelope-packaging workflow. The final requirements targeted automated writing, minimal operator intervention, a build cost below $500, and handwriting that most reviewers would identify as human-written.",
       },
       {
         heading: "Approach",
-        body: "A recurrent neural network was designed and trained to generate human-like handwriting trajectories.",
+        body: "The project adapted a recurrent handwriting-synthesis model to generate pen trajectories from text, then connected those trajectories to a desktop control application and physical plotting hardware.",
+        highlights: [
+          {
+            label: "Sequence generation",
+            body: "An LSTM-based recurrent network follows the Graves handwriting-synthesis architecture, using an attention window and Gaussian-mixture output to predict continuous pen movement and stroke state from an input sentence.",
+          },
+          {
+            label: "Style variation",
+            body: "A learned latent style representation gives the generator explicit variation instead of depending only on hidden-state drift, allowing repeated text inputs to produce distinct handwriting samples.",
+          },
+          {
+            label: "Stable character alignment",
+            body: "Variational encoding, Gaussian-mixture modeling, and monotonic attention were evaluated to reduce skipped, repeated, or abruptly changing characters in longer generated sequences.",
+          },
+        ],
       },
       {
-        heading: "System",
-        body: "The model output was integrated with a PyQt application and automated pen-plotter execution.",
+        heading: "Architecture",
+        body: "TensorFlow produces handwriting trajectories that a Python and PyQt control layer converts into G-code. GRBL firmware drives the pen plotter, while the surrounding modular mechanism positions the index card and envelope for writing, stamping, transfer, insertion, and sealing stages.",
+        technologyTable: {
+          title: "Technology stack",
+          technologies: [
+            {
+              name: "TensorFlow",
+              iconSlug: "tensorflow",
+              url: "https://www.tensorflow.org/",
+            },
+            {
+              name: "Python",
+              iconSlug: "python",
+              url: "https://www.python.org/",
+            },
+            {
+              name: "PyQt",
+              url: "https://www.riverbankcomputing.com/software/pyqt/",
+            },
+            {
+              name: "GRBL",
+              url: "https://github.com/gnea/grbl",
+            },
+            {
+              name: "NVIDIA GPUs",
+              iconSlug: "nvidia",
+              url: "https://www.nvidia.com/",
+            },
+            {
+              name: "Google Colab",
+              iconSlug: "googlecolab",
+              url: "https://colab.google/",
+            },
+          ],
+        },
       },
       {
-        heading: "Training",
-        body: "Training pipelines were optimized for NVIDIA P100 and RTX 3090 GPUs, producing handwriting measured at approximately 80% indistinguishability.",
+        heading: "Physical Workflow",
+        body: "The deployable system combines the handwriting model with a supervised, continuous mailing workflow built around standard 3-by-5-inch index cards and number-10 envelopes.",
+        highlights: [
+          {
+            label: "Writing stage",
+            body: "The operator loads the card and envelope, the system clamps them in repeatable positions, and the GRBL-controlled plotter writes the generated message and addressing information with a real pen.",
+          },
+          {
+            label: "Envelope handling",
+            body: "After writing, the mechanism applies a stamp, releases the materials, transfers and flips the envelope, opens its flap, inserts the index card, and seals the package for output.",
+          },
+          {
+            label: "Modular construction",
+            body: "The writing and packaging stages were designed as separable modules so the prototype could be transported, reassembled, and iterated without rebuilding the full system.",
+          },
+        ],
+      },
+      {
+        heading: "Validation",
+        body: "The supplied final project documentation records the achieved requirements as well as the parts of the assembly line that remained incomplete at submission.",
+        highlights: [
+          {
+            label: "Handwriting authenticity",
+            body: "The final requirements report records 86.3% of evaluators identifying the generated writing as human, exceeding the documented 85% acceptance threshold.",
+          },
+          {
+            label: "Cost and modularity",
+            body: "The prototype was documented at $481.55, below the $500 requirement, and the modular assembly requirement was marked complete.",
+          },
+          {
+            label: "Automation scope",
+            body: "Automatic writing was marked complete, while the one-interaction production cycle and automatic envelope-packaging requirements were recorded as partially complete.",
+          },
+        ],
       },
     ],
   },

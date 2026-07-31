@@ -32,6 +32,7 @@ export type Project = {
   title: string;
   summary: string;
   role: string;
+  detailLayout?: "standard" | "expanded";
   technologies: string[];
   publishedAt: string;
   featured: boolean;

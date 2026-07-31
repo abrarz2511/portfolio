@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import physicianAssistantImage from "../../physician_assistant.png";
+import { projectVisuals } from "@/data/project-visuals";
 import { projects } from "@/data/projects";
 import { AnimatedContent } from "@/components/react-bits/AnimatedContent";
 import { ProjectCard } from "@/components/cards/ProjectCard";
@@ -29,12 +29,8 @@ export function FeaturedProjects() {
               <AnimatedContent delay={index * 70} key={project.slug}>
                 <ProjectCard
                   project={project}
-                  visualImage={index === 0 ? physicianAssistantImage : undefined}
-                  visualAlt={
-                    index === 0
-                      ? "Physician Assistant app interface and clinical workflow features"
-                      : undefined
-                  }
+                  visualImage={projectVisuals[project.slug]?.image}
+                  visualAlt={projectVisuals[project.slug]?.alt}
                 />
               </AnimatedContent>
             ))}

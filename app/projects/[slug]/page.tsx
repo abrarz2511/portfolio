@@ -37,7 +37,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) notFound();
-  const isPhysicianAssistant = project.slug === "physicians-assistant";
+  const usesExpandedCaseStudyLayout = project.detailLayout === "expanded";
 
   return (
     <article className="case-study">
@@ -69,26 +69,26 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
             ) : null}
           </div>
           <p className="eyebrow">
-            {isPhysicianAssistant
+            {usesExpandedCaseStudyLayout
               ? formatDate(project.publishedAt)
               : `${project.status === "building" ? "In active development" : "Completed"} · ${formatDate(project.publishedAt)}`}
           </p>
           <h1>{project.title}</h1>
           <p className="case-study__summary">{project.summary}</p>
           <div
-            className={`case-study__meta${isPhysicianAssistant ? " case-study__meta--role-only" : ""}`}
+            className={`case-study__meta${usesExpandedCaseStudyLayout ? " case-study__meta--role-only" : ""}`}
           >
             <span
               className={
-                isPhysicianAssistant
+                usesExpandedCaseStudyLayout
                   ? "case-study__role--highlighted"
                   : undefined
               }
             >
-              {isPhysicianAssistant ? null : <small>Role</small>}
+              {usesExpandedCaseStudyLayout ? null : <small>Role</small>}
               {project.role}
             </span>
-            {isPhysicianAssistant ? null : (
+            {usesExpandedCaseStudyLayout ? null : (
               <span>
                 <small>Stack</small>
                 {project.technologies.join(" · ")}
@@ -98,11 +98,11 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
         </div>
       </header>
       <div
-        className={`shell case-study__body${isPhysicianAssistant ? " case-study__body--without-index" : ""}`}
+        className={`shell case-study__body${usesExpandedCaseStudyLayout ? " case-study__body--without-index" : ""}`}
       >
         {project.sections.map((section, index) => (
           <section key={section.heading}>
-            {isPhysicianAssistant ? null : (
+            {usesExpandedCaseStudyLayout ? null : (
               <span className="case-study__index">
                 {String(index + 1).padStart(2, "0")}
               </span>
@@ -186,9 +186,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
             </div>
           </section>
         ))}
-        {(!isPhysicianAssistant && project.repositoryUrl) || project.liveUrl ? (
+        {(!usesExpandedCaseStudyLayout && project.repositoryUrl) ||
+        project.liveUrl ? (
           <div className="case-study__links">
-            {!isPhysicianAssistant && project.repositoryUrl ? (
+            {!usesExpandedCaseStudyLayout && project.repositoryUrl ? (
               <Link href={project.repositoryUrl} rel="noreferrer" target="_blank">
                 <Code2 size={17} aria-hidden="true" /> Source
               </Link>
