@@ -19,8 +19,8 @@ export default function ProjectsPage() {
       />
       <section className="page-section">
         <div className="shell projects-grid">
-          {projects.map((project, index) => (
-            <ProjectCard project={project} index={index} key={project.slug} />
+          {projects.map((project) => (
+            <ProjectCard project={project} key={project.slug} />
           ))}
         </div>
       </section>

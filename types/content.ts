@@ -1,6 +1,30 @@
+export type ProjectDocument = {
+  source: string;
+  purpose: string;
+  approximatePages: string;
+  citationLabel: string;
+  citationUrl: string;
+};
+
 export type ProjectSection = {
   heading: string;
   body: string;
+  highlights?: {
+    label: string;
+    body: string;
+  }[];
+  video?: {
+    youtubeId: string;
+    title: string;
+  };
+  technologyTable?: {
+    title: string;
+    technologies: Technology[];
+  };
+  documentTable?: {
+    introduction: string;
+    documents: ProjectDocument[];
+  };
 };
 
 export type Project = {
@@ -40,6 +64,7 @@ export type Article = {
 export type Technology = {
   name: string;
   iconSlug?: string;
+  url: string;
 };
 
 export type TechnologyGroup = {

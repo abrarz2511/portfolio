@@ -25,6 +25,7 @@ import {
   siPytorch,
   siPython,
   siReact,
+  siRedis,
   siRiscv,
   siSharp,
   siTensorflow,
@@ -62,6 +63,7 @@ const icons: Record<string, SimpleIcon> = {
   pytorch: siPytorch,
   python: siPython,
   react: siReact,
+  redis: siRedis,
   riscv: siRiscv,
   sharp: siSharp,
   tensorflow: siTensorflow,
@@ -81,21 +83,29 @@ export function TechnologyItem({ technology }: { technology: Technology }) {
           : undefined
       }
     >
-      {icon ? (
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          role="img"
-          className="technology-item__icon"
-        >
-          <path d={icon.path} />
-        </svg>
-      ) : (
-        <span className="technology-item__fallback" aria-hidden="true">
-          {technology.name.slice(0, 2).toUpperCase()}
-        </span>
-      )}
-      <span>{technology.name}</span>
+      <a
+        className="technology-item__link"
+        href={technology.url}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`${technology.name} official website (opens in a new tab)`}
+      >
+        {icon ? (
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            role="img"
+            className="technology-item__icon"
+          >
+            <path d={icon.path} />
+          </svg>
+        ) : (
+          <span className="technology-item__fallback" aria-hidden="true">
+            {technology.name.slice(0, 2).toUpperCase()}
+          </span>
+        )}
+        <span>{technology.name}</span>
+      </a>
     </li>
   );
 }

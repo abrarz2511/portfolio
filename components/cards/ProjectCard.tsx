@@ -1,14 +1,17 @@
 import { ArrowUpRight } from "lucide-react";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import type { Project } from "@/types/content";
 import { SpotlightCard } from "@/components/react-bits/SpotlightCard";
 
 export function ProjectCard({
   project,
-  index,
+  visualImage,
+  visualAlt,
 }: {
   project: Project;
-  index: number;
+  visualImage?: StaticImageData;
+  visualAlt?: string;
 }) {
   return (
     <SpotlightCard className="project-card">
@@ -17,9 +20,20 @@ export function ProjectCard({
         className="project-card__link"
         aria-label={`View ${project.title} case study`}
       >
-        <div className="project-card__visual" aria-hidden="true">
-          <span>{String(index + 1).padStart(2, "0")}</span>
-          <div className="project-card__orb" />
+        <div
+          className="project-card__visual"
+          aria-hidden={visualImage ? undefined : true}
+        >
+          {visualImage ? (
+            <Image
+              src={visualImage}
+              alt={visualAlt ?? `${project.title} project preview`}
+              className="project-card__image"
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+            />
+          ) : null}
+          {visualImage ? null : <div className="project-card__orb" />}
         </div>
         <div className="project-card__content">
           <div className="project-card__meta">
